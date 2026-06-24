@@ -1,14 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { useExpenses } from '@/lib/storage'
 import SummaryCards from '@/components/SummaryCards'
 import SpendingChart from '@/components/SpendingChart'
 import CategoryBadge from '@/components/CategoryBadge'
+import ExportModal from '@/components/ExportModal'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
 export default function DashboardPage() {
   const { expenses, loaded } = useExpenses()
+  const [showExport, setShowExport] = useState(false)
 
   if (!loaded) {
     return (
@@ -22,9 +25,21 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">Your spending overview</p>
+      {showExport && <ExportModal expenses={expenses} onClose={() => setShowExport(false)} />}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-1">Your spending overview</p>
+        </div>
+        <button
+          onClick={() => setShowExport(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Export Data
+        </button>
       </div>
 
       <SummaryCards expenses={expenses} />
